@@ -123,7 +123,7 @@ export default {
         // 上传的图片地址
         logoUrl: "",
         tmName: "",
-        id: 0,
+        id: undefined,
       },
       rules: {
         tmName: [

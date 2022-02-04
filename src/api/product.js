@@ -21,3 +21,5 @@ export const getCategory3=(category2Id)=>request({url:`/admin/product/getCategor
 // 获取商品属性值
 // GET /admin/product/attrInfoList/{category1Id}/{category2Id}/{category3Id}
 export const getAttr = (category1Id,category2Id,category3Id)=>request({url:`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`,method:"get"})
+// 修改或添加属性
+export const updateAddAttr=(data)=>request({url:"/admin/product/saveAttrInfo",method:"post",data})
