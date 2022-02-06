@@ -12,14 +12,37 @@ export const updateAddBrand = (data)=>{
 }
 // 删除品牌
 export const delBrand=(id)=>request({url:`/admin/product/baseTrademark/remove/${id}`,method:"delete"})
+
 // 获取一级分类的数据
 export const getCategory1 = ()=>request({url:"/admin/product/getCategory1",method:"get"})
 // 获取二级分类的数据
 export const getCategory2=(category1Id)=>request({url:`/admin/product/getCategory2/${category1Id}`,method:"get"})
 // 获取三级分类的数据
 export const getCategory3=(category2Id)=>request({url:`/admin/product/getCategory3/${category2Id}`,method:"get"})
+
 // 获取商品属性值
 // GET /admin/product/attrInfoList/{category1Id}/{category2Id}/{category3Id}
 export const getAttr = (category1Id,category2Id,category3Id)=>request({url:`/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`,method:"get"})
 // 修改或添加属性
 export const updateAddAttr=(data)=>request({url:"/admin/product/saveAttrInfo",method:"post",data})
+
+// 获取SPU的列表信息
+export const getSpu = (page,limit,category3Id)=>request({url:`/admin/product/${page}/${limit}?category3Id=${category3Id}`})
+// 获取单个SPU的信息
+export const getSpuOne = (spuId)=>request({url:`/admin/product/getSpuById/${spuId}`,method:"get"})
+// 获取品牌列表GET 
+export const getTrademarkList=()=>request({url:"/admin/product/baseTrademark/getTrademarkList",method:"get"})
+// 获取销售属性列表GET /admin/product/baseSaleAttrList
+export const getSaleAttr=()=>request({url:"/admin/product/baseSaleAttrList",method:"get"})
+// 获取spu图片GET /admin/product/spuImageList/{spuId}
+export const getSpuImg=(spuId)=>request({url:`/admin/product/spuImageList/${spuId}`,method:"get"})
+// 新增或者修改Spu
+export const addOrUpdateSpu=(data)=>{
+  if (data.id){
+    return request({url:"/admin/product/updateSpuInfo",method:"post",data})
+  }else{
+    return request({url:"/admin/product/saveSpuInfo",method:"post",data})
+  }
+}
+// 删除SPU
+export const deleteSpu = (spuId)=>request({url:`/admin/product/deleteSpu/${spuId}`,method:"delete"})

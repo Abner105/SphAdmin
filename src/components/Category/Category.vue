@@ -6,6 +6,7 @@
           placeholder="请选择"
           v-model="category1Id"
           @change="c1change"
+          :disabled="show"
         >
           <el-option
             :label="c1.name"
@@ -20,6 +21,7 @@
           placeholder="请选择"
           v-model="category2Id"
           @change="c2change"
+          :disabled="show"
         >
           <el-option
             :label="c2.name"
@@ -34,6 +36,7 @@
           placeholder="请选择"
           v-model="category3Id"
           @change="c3change"
+          :disabled="show"
         >
           <el-option
             :label="c3.name"
@@ -62,6 +65,8 @@ export default {
       },
     };
   },
+   // 如果再添加/修改属性值列表，选择框置灰
+  props:["show"],
   mounted() {
     // 获取一级分类的数据
     this.$PAPI.getCategory1().then((res) => {

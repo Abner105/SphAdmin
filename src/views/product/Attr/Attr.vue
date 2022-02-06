@@ -1,7 +1,7 @@
 <template>
   <div class="attr">
     <el-card style="margin: 20px 0">
-      <Category @changeId="changeId" />
+      <Category @changeId="changeId" :show="isShowAdd"/>
     </el-card>
     <el-card>
       <div v-show="!isShowAdd">
@@ -13,12 +13,13 @@
           @click="addAttr"
           >添加属性</el-button
         >
-        <el-table :data="attrList" border style="margin-top: 20px">
+        <el-table :data="attrList" border style="margin-top: 20px" max-height="630px">
           <el-table-column
             align="center"
             type="index"
             label="序号"
             width="80"
+            
           ></el-table-column>
           <el-table-column
             prop="attrName"
@@ -59,7 +60,7 @@
           <el-form-item label="属性名">
             <el-input
               placeholder="请输入属性名"
-              v-model="attrInfo.attrName"
+              v-model.trim="attrInfo.attrName"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -71,7 +72,7 @@
           @click="addAttrValue"
           >添加属性值</el-button
         >
-        <el-button>取消</el-button>
+        <!-- <el-button>取消</el-button> -->
         <el-table border style="margin: 20px 0" :data="attrInfo.attrValueList">
           <el-table-column
             align="center"
@@ -84,7 +85,7 @@
               <el-input
                 placeholder="请输入属性值"
                 size="mini"
-                v-model="row.valueName"
+                v-model.trim="row.valueName"
                 v-show="isShowInput == $index"
                 :ref="$index"
                 @blur="inputBlur(row)"
@@ -99,15 +100,19 @@
           </el-table-column>
           <el-table-column align="center" label="操作" width="300">
             <template slot-scope="{ row, $index }">
-              <el-button
-                type="danger"
-                icon="el-icon-delete"
-                size="mini"
-              ></el-button>
+              <el-popconfirm :title="`确定删除${row.valueName}吗？`" @onConfirm="deleteAttrValue($index)">
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  plain
+                  slot="reference"
+                ></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary" plain>保存</el-button>
+        <el-button type="primary" plain @click="addOrUpdateAttr" :disabled="!attrInfo.attrName || attrInfo.attrValueList.length<1">保存</el-button>
         <el-button @click="isShowAdd = false">取消</el-button>
       </div>
     </el-card>
@@ -125,7 +130,7 @@ export default {
       category3Id: "",
       attrList: [], // 所有属性列表
       // 是否展示添加属性页面
-      isShowAdd: true,
+      isShowAdd: false,
       // 某个属性的相关信息，收集参数，用于新增和修改属性请求的参数
       attrInfo: {
         attrName: "",
@@ -139,20 +144,23 @@ export default {
     };
   },
   methods: {
-    // 选择三级分类时，请求数据
-    async changeId(data) {
-      this.category1Id = data.category1Id;
-      this.category2Id = data.category2Id;
-      this.category3Id = data.category3Id;
+    // 获取属性列表数据
+    async getAttrList() {
       let res = await this.$PAPI.getAttr(
         this.category1Id,
         this.category2Id,
         this.category3Id
       );
       if (res) {
-        // console.log(res)
         this.attrList = res.data;
       }
+    },
+    // 选择三级分类时，请求数据
+    changeId(data) {
+      this.category1Id = data.category1Id;
+      this.category2Id = data.category2Id;
+      this.category3Id = data.category3Id;
+      this.getAttrList();
     },
     // 点击添加属性按钮
     addAttr() {
@@ -189,6 +197,8 @@ export default {
     },
     // 输入框失去焦点或点击回车，不显示input框
     inputBlur(row) {
+      // 所有行都不显示input框
+      this.isShowInput = -1;
       // 判断输入的值是否合法，是否是空串，是否是有重复
       if (row.valueName.trim() == "") {
         this.$message.error("属性值不能为空");
@@ -200,11 +210,11 @@ export default {
         }
       });
       if (isRepeat) {
+        // 属性值重复，清空属性值并提示重复
+        row.valueName = "";
         this.$message.error("属性值重复");
         return false;
       }
-      // 所有行都不显示input框
-      this.isShowInput = -1;
     },
     // 点击span显示input框
     spanClick(index) {
@@ -215,6 +225,33 @@ export default {
         this.$refs[index].focus();
       });
     },
+    //点击删除属性值的确定按钮
+    deleteAttrValue(index) {
+      this.attrInfo.attrValueList.splice(index,1)
+    },
+    // 点击保存，发送请求，回到属性值列表页面
+    async addOrUpdateAttr(){
+      // 属性名称为空，不能保存
+      if(!this.attrInfo.attrName){
+        this.$message.error("属性名称不能为空")
+        return
+      }
+      // 整理参数，去除为空的属性值
+      this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter(item=>item.valueName)
+      // 发送请求添加/修改属性值
+      let res =await this.$PAPI.updateAddAttr(this.attrInfo)
+      if(res){
+        // 保存成功，并返回和获取属性值列表
+        this.getAttrList()
+        this.$message({
+          type:"success",
+          message:"保存成功"
+        })
+        this.isShowAdd=false
+        return
+      }
+      this.$message.error("保存失败")
+    }
   },
 };
 </script>
