@@ -46,3 +46,5 @@ export const addOrUpdateSpu=(data)=>{
 }
 // 删除SPU
 export const deleteSpu = (spuId)=>request({url:`/admin/product/deleteSpu/${spuId}`,method:"delete"})
+// 获取销售属性列表
+export const getSaleAttrList = (spuId)=>request({url:`/admin/product/spuSaleAttrList/${spuId}`,method:"get"})

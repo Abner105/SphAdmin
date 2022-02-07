@@ -48,6 +48,7 @@
                 icon="el-icon-plus"
                 size="mini"
                 title="添加SKU"
+                @click="addSku(row)"
               ></el-button>
               <el-button
                 type="warning"
@@ -88,7 +89,7 @@
       <!-- 添加/修改SPU -->
       <spu-form v-show="scene == 1" ref="SpuForm" @changScene="changScene" />
       <!-- 添加SKU -->
-      <sku-form v-show="scene == 2" />
+      <sku-form v-show="scene == 2" ref="sku" />
     </el-card>
   </div>
 </template>
@@ -101,17 +102,21 @@ export default {
   name: "Spu",
   data() {
     return {
+      category1Id: "",
+      category2Id: "",
       spuList: [],
       category3Id: "",
       page: 1,
       limit: 5,
       total: 0,
-      scene: 0, // 0 显示spu列表，1 显示添加spu表单，2 显示添加sku表单
+      scene: 2, // 0 显示spu列表，1 显示添加spu表单，2 显示添加sku表单
     };
   },
   methods: {
     // 三级联动获取到3ID时，发送请求获取数据
     changeId(data) {
+      this.category1Id = data.category1Id;
+      this.category2Id = data.category2Id;
       this.category3Id = data.category3Id;
       this.getSpuList();
     },
@@ -163,6 +168,11 @@ export default {
         this.$message({type:"success",message:"删除成功"})
         this.getSpuList(this.spuList.length>1?this.page:1)
       }
+    },
+    // 添加sku
+    addSku(row){
+      this.scene = 2
+      this.$refs.sku.initSku(row)
     }
   },
 };
