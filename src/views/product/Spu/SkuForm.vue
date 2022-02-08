@@ -23,7 +23,7 @@
         v-model.trim="skuInfo.skuDesc"
       ></el-input>
     </el-form-item>
-    <el-form-item label="平台属性">
+    <el-form-item label="平台属性" v-if="attrList.length">
       <el-form inline label-width="80">
         <el-form-item
           :label="attr.attrName"
@@ -41,7 +41,7 @@
         </el-form-item>
       </el-form>
     </el-form-item>
-    <el-form-item label="销售属性">
+    <el-form-item label="销售属性" v-if="saleAttrList.length">
       <el-form inline label-width="80">
         <el-form-item
           :label="saleAttr.saleAttrName"
@@ -59,8 +59,8 @@
         </el-form-item>
       </el-form>
     </el-form-item>
-    <el-form-item label="图片列表">
-      <el-table border :data="imgList">
+    <el-form-item label="图片列表" v-if="imgList.length">
+      <el-table border :data="imgList"  @selection-change="chooseImg">
         <el-table-column
           type="selection"
           width="80"
@@ -78,10 +78,10 @@
               plain
               type="primary"
               v-if="!row.isDefault"
-              @click="changeDefault(row)"
+              @click="changeDefault(row,$index)"
               >设为默认</el-button
             >
-            <el-button plain type="success" v-else>默认</el-button>
+            <el-button plain ref="$index" type="success" v-else>默认</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -119,10 +119,10 @@ export default {
         tmId: 0,
         // 平台属性
         skuAttrValueList: [
-          {
-            attrId: 0,
-            valueId: 0,
-          },
+          // {
+          //   attrId: 0,
+          //   valueId: 0,
+          // },
         ],
         // 默认图片
         skuDefaultImg: "",
@@ -133,16 +133,15 @@ export default {
             imgName: "string",
             imgUrl: "string",
             isDefault: "string",
-            skuId: 0,
             spuImgId: 0,
           },
         ],
         // 销售属性
         skuSaleAttrValueList: [
-          {
-            saleAttrId: 0,
-            saleAttrValueId: 0,
-          },
+          // {
+          //   saleAttrId: 0,
+          //   saleAttrValueId: 0,
+          // },
         ],
       },
     };
@@ -150,6 +149,8 @@ export default {
   methods: {
     // 初始化sku页面
     async initSku(category1Id, category2Id, category3Id, row) {
+      // 恢复初始数据
+      Object.assign(this._data,this.$options.data())
       // 收集参数
       this.spuName = row.spuName;
       this.skuInfo.category3Id = category3Id;
@@ -174,32 +175,52 @@ export default {
       }
     },
     // 设置默认图片
-    changeDefault(row) {
+    changeDefault(row,index) {
+      // 设置默认
       this.imgList.forEach((item) => {
         item.isDefault = 0;
       });
       row.isDefault = 1;
+      // 默认按钮失焦
+      // this.$refs[index].blur()
       // 收集默认图片参数
       this.skuInfo.skuDefaultImg = row.imgUrl;
     },
+    // 选择图片，整理图片的参数
+    chooseImg(imgList){
+      this.skuInfo.skuImageList = imgList
+    },
     // 点击保存，整理参数，发送请求
-    saveSkuInfo(){
-      console.log(11)
-      this.skuInfo.skuAttrValueList = this.attrList.reduce((pre,item)=>{
-        if (item.attrIdAndValueId){
-          let [attrId,valueId] = item.attrIdAndValueId.split(':')
-          pre.push({attrId,valueId})
-          return pre
-        }
-      },[])
-      
-      // {
-      //       attrId: 0,
-      //       valueId: 0,
-      //     },
+    async saveSkuInfo() {
       // 整理平台属性
-
-    }
+      this.skuInfo.skuAttrValueList = this.attrList.reduce((pre, item) => {
+        if (item.attrIdAndValueId) {
+          let [attrId, valueId] = item.attrIdAndValueId.split(":");
+          pre.push({ attrId, valueId });
+          return pre;
+        }
+        return pre;
+      }, []);
+      // 整理销售属性
+      this.skuInfo.skuSaleAttrValueList = this.saleAttrList.reduce((pre, item) => {
+        if (item.saleAttrIdAndValueId) {
+          let [saleAttrId,saleAttrValueId] = item.saleAttrIdAndValueId.split(":");
+          pre.push({ saleAttrId,saleAttrValueId});
+          return pre;
+        }
+        return pre;
+      }, []);
+      // 发送请求
+      let res = await this.$PAPI.saveSku(this.skuInfo)
+      if (res){
+        this.$message({
+          type:"success",
+          message:"保存成功"
+        })
+        this.$emit("changScene",{scene:0,type:""})
+      }
+      // console.log(res)
+    },
   },
 };
 </script>
