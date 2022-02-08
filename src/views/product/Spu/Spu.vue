@@ -63,7 +63,11 @@
                 icon="el-icon-info"
                 size="mini"
               ></el-button>
-              <el-popconfirm :title="`确定要删除${row.spuName}吗？`" @onConfirm="delSpu(row)" style="margin-left:8px;">
+              <el-popconfirm
+                :title="`确定要删除${row.spuName}吗？`"
+                @onConfirm="delSpu(row)"
+                style="margin-left: 8px"
+              >
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -89,7 +93,7 @@
       <!-- 添加/修改SPU -->
       <spu-form v-show="scene == 1" ref="SpuForm" @changScene="changScene" />
       <!-- 添加SKU -->
-      <sku-form v-show="scene == 2" ref="sku" />
+      <sku-form v-show="scene == 2" ref="sku" @changScene="changScene"/>
     </el-card>
   </div>
 </template>
@@ -109,7 +113,7 @@ export default {
       page: 1,
       limit: 5,
       total: 0,
-      scene: 2, // 0 显示spu列表，1 显示添加spu表单，2 显示添加sku表单
+      scene: 0, // 0 显示spu列表，1 显示添加spu表单，2 显示添加sku表单
     };
   },
   methods: {
@@ -162,18 +166,19 @@ export default {
       }
     },
     // 删除SPU
-    async delSpu(row){
-      let res = await this.$PAPI.deleteSpu(row.id)
-      if (res){
-        this.$message({type:"success",message:"删除成功"})
-        this.getSpuList(this.spuList.length>1?this.page:1)
+    async delSpu(row) {
+      let res = await this.$PAPI.deleteSpu(row.id);
+      if (res) {
+        this.$message({ type: "success", message: "删除成功" });
+        this.getSpuList(this.spuList.length > 1 ? this.page : 1);
       }
     },
     // 添加sku
-    addSku(row){
-      this.scene = 2
-      this.$refs.sku.initSku(row)
-    }
+    addSku(row) {
+      this.scene = 2;
+      const { category1Id, category2Id, category3Id } = this;
+      this.$refs.sku.initSku(category1Id, category2Id, category3Id,row);
+    },
   },
 };
 </script>
