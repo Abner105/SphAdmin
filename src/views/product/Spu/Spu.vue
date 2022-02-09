@@ -62,6 +62,7 @@
                 type="info"
                 icon="el-icon-info"
                 size="mini"
+                @click="showSku(row)"
               ></el-button>
               <el-popconfirm
                 :title="`确定要删除${row.spuName}吗？`"
@@ -93,8 +94,22 @@
       <!-- 添加/修改SPU -->
       <spu-form v-show="scene == 1" ref="SpuForm" @changScene="changScene" />
       <!-- 添加SKU -->
-      <sku-form v-show="scene == 2" ref="sku" @changScene="changScene"/>
+      <sku-form v-show="scene == 2" ref="sku" @changScene="changScene" />
     </el-card>
+    <!-- 查看SKU信息 -->
+    <el-dialog :visible.sync="dialogFormVisible" :title="`${spuName}的sku信息`" :before-close="closeDialog">
+      <el-table border :data="skuInfo" v-loading="dialogLoading">
+        <el-table-column width="auto" label="名称" prop="skuName"></el-table-column>
+        <el-table-column label="价格" width="150" prop="price"></el-table-column>
+        <el-table-column label="重量" width="150" prop="weight"></el-table-column
+        >
+        <el-table-column label="默认图片" align="center" width="150">
+          <template slot-scope="{row}">
+            <img :src="row.skuDefaultImg" style="width:100px" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -114,6 +129,14 @@ export default {
       limit: 5,
       total: 0,
       scene: 0, // 0 显示spu列表，1 显示添加spu表单，2 显示添加sku表单
+      // 是否显示dialog，展示SKU信息
+      dialogFormVisible: false,
+      // sku信息
+      skuInfo:[],
+      // spuName
+      spuName:"",
+      // 对话框的loading效果
+      dialogLoading:true
     };
   },
   methods: {
@@ -177,8 +200,28 @@ export default {
     addSku(row) {
       this.scene = 2;
       const { category1Id, category2Id, category3Id } = this;
-      this.$refs.sku.initSku(category1Id, category2Id, category3Id,row);
+      this.$refs.sku.initSku(category1Id, category2Id, category3Id, row);
     },
+    // 查看sku信息
+    async showSku(spu){
+      this.spuName = spu.spuName
+      // 显示对话框
+      this.dialogFormVisible = true
+      // 获取信息
+      let res = await this.$PAPI.getSkuInfo(spu.id)
+      if (res){
+        this.skuInfo = res.data
+        this.dialogLoading = false
+      }
+    },
+    // 关闭sku信息的dialog
+    closeDialog(done){
+      // 清除sku信息
+      this.skuInfo=[]
+      // 显示loading,以便下次进入继续有loading效果
+      this.dialogLoading = true
+      done()
+    }
   },
 };
 </script>

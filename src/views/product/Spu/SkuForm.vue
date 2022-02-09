@@ -60,7 +60,7 @@
       </el-form>
     </el-form-item>
     <el-form-item label="图片列表" v-if="imgList.length">
-      <el-table border :data="imgList"  @selection-change="chooseImg">
+      <el-table border :data="imgList" @selection-change="chooseImg">
         <el-table-column
           type="selection"
           width="80"
@@ -78,10 +78,10 @@
               plain
               type="primary"
               v-if="!row.isDefault"
-              @click="changeDefault(row,$index)"
+              @click="changeDefault(row, $index)"
               >设为默认</el-button
             >
-            <el-button plain ref="$index" type="success" v-else>默认</el-button>
+            <el-button plain :ref="$index" type="success" v-else>默认</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -150,7 +150,7 @@ export default {
     // 初始化sku页面
     async initSku(category1Id, category2Id, category3Id, row) {
       // 恢复初始数据
-      Object.assign(this._data,this.$options.data())
+      Object.assign(this._data, this.$options.data());
       // 收集参数
       this.spuName = row.spuName;
       this.skuInfo.category3Id = category3Id;
@@ -175,20 +175,22 @@ export default {
       }
     },
     // 设置默认图片
-    changeDefault(row,index) {
+    changeDefault(row, index) {
       // 设置默认
       this.imgList.forEach((item) => {
         item.isDefault = 0;
       });
       row.isDefault = 1;
       // 默认按钮失焦
-      // this.$refs[index].blur()
+      // this.$nextTick(() => {
+      //   console.log(this.$refs[index]._vnode)
+      // });
       // 收集默认图片参数
       this.skuInfo.skuDefaultImg = row.imgUrl;
     },
     // 选择图片，整理图片的参数
-    chooseImg(imgList){
-      this.skuInfo.skuImageList = imgList
+    chooseImg(imgList) {
+      this.skuInfo.skuImageList = imgList;
     },
     // 点击保存，整理参数，发送请求
     async saveSkuInfo() {
@@ -202,22 +204,26 @@ export default {
         return pre;
       }, []);
       // 整理销售属性
-      this.skuInfo.skuSaleAttrValueList = this.saleAttrList.reduce((pre, item) => {
-        if (item.saleAttrIdAndValueId) {
-          let [saleAttrId,saleAttrValueId] = item.saleAttrIdAndValueId.split(":");
-          pre.push({ saleAttrId,saleAttrValueId});
+      this.skuInfo.skuSaleAttrValueList = this.saleAttrList.reduce(
+        (pre, item) => {
+          if (item.saleAttrIdAndValueId) {
+            let [saleAttrId, saleAttrValueId] =
+              item.saleAttrIdAndValueId.split(":");
+            pre.push({ saleAttrId, saleAttrValueId });
+            return pre;
+          }
           return pre;
-        }
-        return pre;
-      }, []);
+        },
+        []
+      );
       // 发送请求
-      let res = await this.$PAPI.saveSku(this.skuInfo)
-      if (res){
+      let res = await this.$PAPI.saveSku(this.skuInfo);
+      if (res) {
         this.$message({
-          type:"success",
-          message:"保存成功"
-        })
-        this.$emit("changScene",{scene:0,type:""})
+          type: "success",
+          message: "保存成功",
+        });
+        this.$emit("changScene", { scene: 0, type: "" });
       }
       // console.log(res)
     },

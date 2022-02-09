@@ -50,3 +50,8 @@ export const deleteSpu = (spuId)=>request({url:`/admin/product/deleteSpu/${spuId
 export const getSaleAttrList = (spuId)=>request({url:`/admin/product/spuSaleAttrList/${spuId}`,method:"get"})
 // 保存sku属性
 export const saveSku = (data)=>request({url:"/admin/product/saveSkuInfo",method:"post",data})
+// 获取sku信息
+export const getSkuInfo = (spuId)=>request({url:`/admin/product/findBySpuId/${spuId}`,method:"get"})
+
+// 获取SKU列表
+export const getSkuList = (page,limit)=>request({url:`/admin/product/list/${page}/${limit}`,method:"get"})
