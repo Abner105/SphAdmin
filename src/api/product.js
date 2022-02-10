@@ -55,3 +55,9 @@ export const getSkuInfo = (spuId)=>request({url:`/admin/product/findBySpuId/${sp
 
 // 获取SKU列表
 export const getSkuList = (page,limit)=>request({url:`/admin/product/list/${page}/${limit}`,method:"get"})
+// 商品上架
+export const onSale = (skuId)=>request({url:`/admin/product/onSale/${skuId}`,method:"get"})
+// 商品下架
+export const downSale = (skuId)=>request({url:`/admin/product/cancelSale/${skuId}`,method:"get"})
+// 获取sku信息
+export const getSku = (skuId)=>request({url:`/admin/product/getSkuById/${skuId}`,method:'get'})
