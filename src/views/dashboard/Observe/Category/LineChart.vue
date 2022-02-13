@@ -1,11 +1,24 @@
 <template>
-  <div class="box" ref="box"></div>
+  <div>
+    <div class="header">
+      <span>{{ title }}</span>
+      <i class="el-icon-warning-outline"></i>
+    </div>
+    <div>
+      <span  class="number">{{number}}</span>
+      <span>17.1</span>
+      <i class="el-icon-caret-bottom"></i>
+      <i class="el-icon-caret-top"></i>
+    </div>
+    <div class="box" ref="box"></div>
+  </div>
 </template>
 
 <script>
 import * as echarts from "echarts";
 export default {
   name: "LineChart",
+  props: ["title", "number"],
   mounted() {
     const box = this.$refs.box;
     const myEcharts = echarts.init(box);
@@ -29,7 +42,7 @@ export default {
           type: "line", // 折线图
           data: [11, 23, 43, 22, 31, 21, 15],
           itemStyle: {
-            color: "purple",
+            color: "skyblue",
           },
           smooth: true, // 平滑显示
           showSymbol: false,
@@ -44,7 +57,7 @@ export default {
               colorStops: [
                 {
                   offset: 0,
-                  color: "rgb(255, 170, 255)", // 0% 处的颜色
+                  color: "skyblue", // 0% 处的颜色
                 },
                 {
                   offset: 1,
@@ -63,7 +76,19 @@ export default {
 <style scoped>
 .box {
   width: 100%;
-  height: 100%;
+  height: 80px;
   /* background-color: rgb(255, 170, 255); */
+}
+.header {
+  /* width: 100%; */
+  display: flex;
+  justify-content: space-between;
+  margin: 0 20px;
+}
+.number{
+  display: inline-block;
+  margin: 5px 20px;
+  font-size: 30px;
+  font-weight: 500;
 }
 </style>

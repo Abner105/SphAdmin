@@ -6,6 +6,8 @@
           <template slot="chart">
             <div v-if="item.scene==0">周同比 12% 👇 日同比 11% 👆</div>
             <line-chart v-if="item.scene==1" />
+            <bar-chart v-if="item.scene==2" />
+            <progress-chart v-if="item.scene==3" />
           </template>
         </Detail>
       </el-col>
@@ -14,13 +16,17 @@
 </template>
 
 <script>
+import BarChart from '../HomeHeader/chart/BarChart.vue';
 import LineChart from '../HomeHeader/chart/LineChart.vue';
+import ProgressChart from '../HomeHeader/chart/ProgressChart.vue';
 import Detail from "./Detail/Detail.vue";
 export default {
   name: "HomeHeader",
   components: {
     Detail,
     LineChart,
+    BarChart,
+    ProgressChart,
   },
   data() {
     return {

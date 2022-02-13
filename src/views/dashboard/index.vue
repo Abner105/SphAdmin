@@ -1,20 +1,22 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-header">
-      <HomeHeader />
-    </div>
-    <div class="dashboard-content"></div>
-    <div class="dashboard-floor"></div>
+    <HomeHeader />
+    <sale />
+    <Observe />
   </div>
 </template>
 
 <script>
-import HomeHeader from "./HomeHeader"
+import HomeHeader from "./HomeHeader";
+import Sale from './Sale/Sale.vue';
+import Observe from "./Observe"
 export default {
   name: "Dashboard",
-  components:{
-    HomeHeader
-  }
+  components: {
+    HomeHeader,
+    Sale,
+    Observe
+  },
 };
 </script>
 
