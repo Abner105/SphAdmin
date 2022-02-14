@@ -37,6 +37,9 @@ Vue.config.productionTip = false
 // 引入请求API
 import * as ProductAPI from "@/api/product"
 Vue.prototype.$PAPI = ProductAPI
+// 权限管理的请求
+import ACLAPI from "./api/acl/index"
+Vue.prototype.$API = ACLAPI
 // 引入全局组件
 import Category from "@/components/Category/Category.vue"
 Vue.component("Category",Category)

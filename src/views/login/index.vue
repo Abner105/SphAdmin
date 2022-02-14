@@ -93,7 +93,9 @@ export default {
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", validator: validateUsername },
+          { required: true, trigger: "blur", 
+          // validator: validateUsername    // 不限制登录的用户
+          },
         ],
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
@@ -130,7 +132,7 @@ export default {
           this.$store
             .dispatch("user/login", this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
+              this.$router.push({ path: "/" });
               this.loading = false;
             })
             .catch(() => {

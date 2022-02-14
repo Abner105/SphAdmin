@@ -19,10 +19,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
+
 
 export default {
   components: { SidebarItem, Logo },
@@ -30,9 +31,14 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
-    routes() {
-      return this.$router.options.routes
-    },
+    ...mapState({
+      routes:state=>state.user.allRoutes
+    }),
+    // routes() {
+    //   // 权限管理 应该从仓库中获取最新的路由
+    //   // return this.$router.options.routes
+    //   return this.$store.user.state.allRoutes
+    // },
     activeMenu() {
       const route = this.$route
       const { meta, path } = route

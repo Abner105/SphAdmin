@@ -7,8 +7,8 @@
     <div>
       <span  class="number">{{number}}</span>
       <span>17.1</span>
-      <i class="el-icon-caret-bottom"></i>
-      <i class="el-icon-caret-top"></i>
+      <i class="el-icon-caret-bottom" style="color:red"></i>
+      <i class="el-icon-caret-top" style="color:yellowgreen"></i>
     </div>
     <div class="box" ref="box"></div>
   </div>

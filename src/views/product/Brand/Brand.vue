@@ -46,7 +46,7 @@
     </el-table>
     <!-- 分页器 -->
     <el-pagination
-      style="margin:20px 50px; textAlign: center"
+      style="margin:20px 50px; text-align: center"
       :total="total"
       :current-page="pageNo"
       :page-sizes="[5, 10, 20]"
